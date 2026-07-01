@@ -80,7 +80,7 @@ class NeuralNetwork:
 
     def __init__(self, input_size, hidden_size, output_size, seed=42):
         rng = np.random.default_rng(seed)
-        # He-style small random initialization for the weights
+        # Xavier-style small random initialization (suited to sigmoid activations)
         self.W1 = rng.standard_normal((input_size, hidden_size)) * np.sqrt(1.0 / input_size)
         self.b1 = np.zeros((1, hidden_size))
         self.W2 = rng.standard_normal((hidden_size, output_size)) * np.sqrt(1.0 / hidden_size)
