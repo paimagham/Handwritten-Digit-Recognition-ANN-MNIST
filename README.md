@@ -1,6 +1,6 @@
-# Handwritten Digit Recognition — Neural Network from Scratch (NumPy)
+# Handwritten Digit Recognition — Artificial Neural Network from Scratch using NumPy
 
-A neural network built **using only NumPy** — no PyTorch, TensorFlow, or Keras — that learns to read handwritten digits (0 through 9) from the MNIST dataset. Every part of the network, including the backpropagation learning algorithm, is written by hand to show exactly how a neural network works under the hood.
+An artificial neural network built **using only NumPy** — no PyTorch, TensorFlow, or Keras — that learns to read handwritten digits (0 through 9) from the MNIST dataset. Every part of the network, including the backpropagation learning algorithm, is written by hand to show exactly how a neural network works under the hood.
 
 ## What is MNIST?
 
@@ -55,7 +55,34 @@ The code generates four images:
 | `sample_predictions.png` | Example predictions (green = correct, red = wrong) |
 
 ## Architecture at a Glance
-Everything — forward pass, backpropagation, and weight updates — is coded manually with NumPy. There is no autograd or ML framework doing the math; the gradients are derived and implemented by hand using the chain rule.
+**Layer-by-layer breakdown:**
+
+| Layer | Size | Activation | Role |
+|-------|------|------------|------|
+| Input | 784 | — | Flattened 28×28 pixel image (one value per pixel) |
+| Hidden | 128 | Sigmoid | Learns intermediate features like edges, strokes, and curves |
+| Output | 10 | Softmax | Produces a probability for each digit class (0–9) |
+
+**Weights and parameters:**
+- `W1` (784 × 128) and `b1` (1 × 128) connect the input to the hidden layer
+- `W2` (128 × 10) and `b2` (1 × 10) connect the hidden layer to the output
+- Weights are initialized with small random values scaled by 1/√(layer size) — this keeps the sigmoid activations in a healthy range and prevents the network from stalling early in training
+- Total learnable parameters: ~101,000
+
+**The forward pass** computes, in order: 
+   
+    z1 = X · W1 + b1        →   a1 = sigmoid(z1)
+    z2 = a1 · W2 + b2       →   a2 = softmax(z2)
+    
+**The backward pass** applies the chain rule to compute gradients at each layer: 
+   
+    dz2 = a2 − y_true                    (output error)
+    dz1 = (dz2 · W2ᵀ) ⊙ sigmoid'(a1)     (hidden error)
+  and then updates every weight and bias using gradient descent:
+    
+     W ← W − learning_rate · dW
+     
+Everything — the forward pass, backpropagation, and weight updates — is coded manually with NumPy. There is no autograd or ML framework doing the math; the gradients are derived and implemented by hand using the chain rule. This is the core of what makes the project a genuine "from scratch" implementation.
 
 ## Training Setup
 
@@ -86,14 +113,6 @@ Per-digit performance is strongest for visually distinct digits (0, 1, 6) and we
 
 ### Dataset Samples
 ![MNIST Samples](mnist_samples.png)
-
-## Real-World Applications
-
-The same core technology powers:
-- Automatic mail sorting (reading zip codes)
-- Check deposit apps (reading handwritten amounts)
-- License plate recognition
-- Digitizing handwritten documents
 
 ## Tech Stack
 
