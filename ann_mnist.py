@@ -1,5 +1,5 @@
 # =============================================================================
-# Handwritten Digit Recognition — Neural Network from Scratch (NumPy only)
+# Handwritten Digit Recognition — Artificial Neural Network from Scratch using NumPy
 # =============================================================================
 # A fully-connected neural network built using only NumPy — no PyTorch,
 # TensorFlow, or Keras. Forward propagation, backpropagation, and gradient
