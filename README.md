@@ -1,58 +1,107 @@
-# Handwritten Digit Recognition — Neural Network from Scratch
+# Handwritten Digit Recognition — Neural Network from Scratch (NumPy)
 
-A neural network built **using only NumPy** — no PyTorch, TensorFlow, or Keras — that learns to read handwritten digits (0 through 9). Every part of the network, including the learning process itself, is written by hand to show exactly how a neural network works under the hood.
+A neural network built **using only NumPy** — no PyTorch, TensorFlow, or Keras — that learns to read handwritten digits (0 through 9) from the MNIST dataset. Every part of the network, including the backpropagation learning algorithm, is written by hand to show exactly how a neural network works under the hood.
 
 ## What is MNIST?
 
-MNIST is one of the most famous datasets in machine learning — often called the "Hello World" of deep learning. It contains **70,000 images of handwritten digits** (0–9), each written by a different person and scanned into a small **28×28 pixel** grayscale image.
+MNIST is one of the most famous datasets in machine learning — often called the "Hello World" of deep learning. It contains **70,000 images of handwritten digits** (0–9), each written by a different person and scanned into a small **28×28 pixel** grayscale image. Because the handwriting comes from thousands of different people, the digits vary in shape, thickness, and style, making it a great test of whether a model can learn to recognize patterns the way humans do.
 
-Because the handwriting comes from thousands of different people, the digits vary in shape, thickness, and style — which makes it a great test of whether a computer can learn to recognize patterns the way humans do. The task is simple to state but not trivial to solve: given an image of a handwritten number, correctly identify which digit (0–9) it is.
+## How the Code Works — Step by Step
 
-## What This Project Does
+### Step 1: Data Loading
+Loads 70,000 handwritten digit images from MNIST. These are the examples the network learns from — like collecting flashcards before studying.
 
-This project teaches a computer to recognize those handwritten digits by building a neural network from the ground up:
+### Step 2: Data Visualization
+Displays a few sample images so we can see what the data actually looks like before training begins.
+**Output:** `mnist_samples.png` — 10 example digits
 
-1. **Loads** 70,000 digit images from MNIST
-2. **Prepares** the data by normalizing pixel values and splitting into training and testing sets
-3. **Builds** a neural network by hand with three layers
-4. **Trains** the network by showing it thousands of examples and letting it learn from its mistakes
-5. **Evaluates** how well it recognizes digits it has never seen before
+### Step 3: Data Preparation
+- **Splitting:** 80% of the data is used for training (teaching the network) and 20% for testing (the final exam on unseen digits)
+- **Standardization:** Pixel values are rescaled so the network trains in a stable, consistent range
+- **Why:** Clean, well-scaled data makes the math easier and helps the network learn faster
 
-## How the Network is Built
-- **Input layer (784 neurons):** one neuron for each pixel in the 28×28 image
-- **Hidden layer (128 neurons):** finds patterns like edges, curves, and loops
-- **Output layer (10 neurons):** one for each possible digit, giving the final prediction
+### Step 4: Neural Network Architecture
+The network has three layers:
+- **Input Layer (784 neurons):** one neuron for each pixel in the 28×28 image
+- **Hidden Layer (128 neurons):** detects patterns like edges, curves, and loops
+- **Output Layer (10 neurons):** one neuron per digit (0–9), giving the final prediction
 
-The interesting part is that **everything is coded manually** — the forward pass, the backpropagation (how the network learns from mistakes), and the weight updates. There is no machine learning library doing the math for me; it's all written using NumPy.
+**Key functions, explained simply:**
+| Function | What it does |
+|----------|--------------|
+| `sigmoid()` | Squashes numbers into a 0–1 range, like a dimmer switch |
+| `softmax()` | Converts outputs into probabilities that add up to 100% |
+| `forward()` | Passes an image through the network to make a prediction |
+| `backward()` | Learns from mistakes by adjusting the weights (backpropagation) |
 
-## Key Pieces Explained Simply
+### Step 5: Training Process
+Learning happens by repetition:
+1. Show the network an image
+2. The network makes a guess
+3. Compare the guess with the correct answer
+4. Adjust the internal weights to reduce the error
+5. Repeat for 100 epochs across all training examples
 
-| Part | What it does |
-|------|--------------|
-| **Sigmoid** | Squashes numbers into a 0–1 range, like a dimmer switch |
-| **Softmax** | Turns the output into probabilities that add up to 100% |
-| **Forward pass** | Sends an image through the network to make a guess |
-| **Backpropagation** | Compares the guess to the right answer and adjusts the network to do better next time |
-| **Training loop** | Repeats this process 100 times so the network keeps improving |
+### Step 6: Evaluation
+Tests the network on images it has **never seen before**, calculates the accuracy, and produces a per-digit breakdown of precision, recall, and F1-score.
+
+### Step 7: Visualizations
+The code generates four images:
+| File | What it shows |
+|------|---------------|
+| `mnist_samples.png` | Original handwritten digits from the dataset |
+| `training_progress.png` | Loss decreasing and accuracy increasing over epochs |
+| `confusion_matrix.png` | Which digits the network confuses with each other |
+| `sample_predictions.png` | Example predictions (green = correct, red = wrong) |
+
+## Architecture at a Glance
+Everything — forward pass, backpropagation, and weight updates — is coded manually with NumPy. There is no autograd or ML framework doing the math; the gradients are derived and implemented by hand using the chain rule.
+
+## Training Setup
+
+| Setting | Value |
+|---------|-------|
+| Architecture | 784 → 128 → 10 |
+| Hidden activation | Sigmoid |
+| Output activation | Softmax |
+| Loss | Cross-entropy |
+| Learning rate | 0.1 |
+| Epochs | 100 |
+| Training samples | 8,000 |
 
 ## Results
 
-As training progresses, the network's mistakes go down and its accuracy goes up. The project generates four visualizations to show what's happening:
+The network reaches **86% accuracy** on the test set — correctly identifying about 86 out of every 100 handwritten digits it has never seen. The emphasis of this project is on understanding and implementing the mechanics of a neural network by hand — deriving backpropagation from the chain rule — rather than on maximizing accuracy. (A framework-based version with ReLU activations and the Adam optimizer would reach ~97%, but would hide the very internals this project was built to expose.)
 
-| Image | What it shows |
-|-------|---------------|
-| `mnist_samples.png` | Example handwritten digits from the dataset |
-| `training_progress.png` | Loss going down and accuracy going up over time |
-| `confusion_matrix.png` | Which digits the network sometimes mixes up |
-| `sample_predictions.png` | Real predictions, with correct ones in green and mistakes in red |
+Per-digit performance is strongest for visually distinct digits (0, 1, 6) and weakest where shapes overlap (e.g. 5 confused with 6), which is exactly what you'd expect from a simple single-hidden-layer network.
+
+### Training Progress
+![Training Progress](training_progress.png)
+
+### Confusion Matrix
+![Confusion Matrix](confusion_matrix.png)
+
+### Sample Predictions
+![Sample Predictions](sample_predictions.png)
+
+### Dataset Samples
+![MNIST Samples](mnist_samples.png)
+
+## Real-World Applications
+
+The same core technology powers:
+- Automatic mail sorting (reading zip codes)
+- Check deposit apps (reading handwritten amounts)
+- License plate recognition
+- Digitizing handwritten documents
 
 ## Tech Stack
 
-- **Python** — the core language used to build the entire neural network and training pipeline
-- **NumPy** — powers all the math behind the network: matrix multiplication, weight updates, activation functions, and the backpropagation calculations, all implemented manually without any deep learning framework
-- **scikit-learn** — used only for loading the MNIST dataset, splitting it into training and testing sets, standardizing the pixel values, and computing evaluation metrics (accuracy, confusion matrix, classification report)
-- **Matplotlib** — creates the visualizations, including the training loss curve, validation accuracy curve, and sample digit images
-- **Seaborn** — used to plot the confusion matrix as a clean, easy-to-read heatmap showing which digits the network confuses
+- **Python** — core language for the whole project
+- **NumPy** — implements all the network math by hand: matrix operations, sigmoid/softmax, forward pass, backpropagation, and weight updates
+- **scikit-learn** — used only to load MNIST, split the data, standardize pixels, and compute evaluation metrics
+- **Matplotlib** — plots the training curves and sample digits
+- **Seaborn** — renders the confusion matrix as a readable heatmap
 
 ## How to Run
 
@@ -63,4 +112,4 @@ python ann_mnist.py
 
 ## Why I Built This
 
-I wanted to truly understand how neural networks learn, not just call a library function. Writing the math by hand — especially backpropagation — gave me a solid foundation that later helped me work on more advanced topics like reinforcement learning, where understanding how models learn from feedback is essential.
+I wanted to truly understand how neural networks learn, not just call a library function. Deriving and coding backpropagation by hand gave me a solid foundation in the mechanics of training — knowledge that later supported my work in reinforcement learning, where understanding how models learn from feedback signals is essential.
